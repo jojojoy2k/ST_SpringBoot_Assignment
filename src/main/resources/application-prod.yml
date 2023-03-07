@@ -1,0 +1,14 @@
+# Production environment configuration
+---
+spring:
+  datasource:
+    url: jdbc:mysql://prodserver/proddb
+    username: produser
+    password: prodpassword
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show_sql: false
+    open-in-view: false
