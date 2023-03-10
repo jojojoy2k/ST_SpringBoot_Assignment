@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -19,8 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -49,9 +46,6 @@ public class UserServiceTests {
         userRepository.deleteAll();
     }
 
-    @Captor
-    ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-
     private User user;
 
     @BeforeEach
@@ -67,37 +61,37 @@ public class UserServiceTests {
     @Test
     public void testCreateUser() {
         when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
-        when(userRepository.save(userCaptor.capture())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
         
         User savedUser = userService.createUser(user);
 
         assertEquals(user, savedUser);
-        assertEquals("encodedPassword", userCaptor.getValue().getPassword());
-        verify(userRepository).save(userCaptor.capture());
+        assertEquals("encodedPassword", savedUser.getPassword());
+        verify(userRepository).save(user);
     }
 
     @Test
     public void testCreateUserWrongPassword() {
         when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
-        when(userRepository.save(userCaptor.capture())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
         
         User savedUser = userService.createUser(user);
 
         assertEquals(user, savedUser);
-        assertNotEquals("wrongPassword", userCaptor.getValue().getPassword());
-        verify(userRepository).save(userCaptor.capture());
+        assertNotEquals("wrongPassword", user.getPassword());
+        verify(userRepository).save(user);
     }
 
     @Test
     public void testCreateUsers() {
         List<User> userList = Arrays.asList(user, new User());
         when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(userRepository.saveAll(anyList())).thenReturn(userList);
+        when(userRepository.saveAll(userList)).thenReturn(userList);
 
         List<User> savedUsers = userService.createUser(userList);
 
         assertEquals(userList, savedUsers);
-        verify(userRepository).saveAll(anyList());
+        verify(userRepository).saveAll(userList);
     }
 
     @Test
@@ -134,15 +128,15 @@ public class UserServiceTests {
         updateUser.setPassword("newpassword");
         when(userRepository.findById(user.getId())).thenReturn(java.util.Optional.of(user));
         when(passwordEncoder.encode(updateUser.getPassword())).thenReturn("encodedNewPassword");
-        when(userRepository.save(userCaptor.capture())).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
 
         User updatedUser = userService.updateUser(user.getId(), updateUser);
 
         assertEquals(user, updatedUser);
-        assertEquals(updateUser.getFirstName(), userCaptor.getValue().getFirstName());
-        assertEquals(updateUser.getLastName(), userCaptor.getValue().getLastName());
-        assertEquals(updateUser.getEmail(), userCaptor.getValue().getEmail());
-        assertEquals("encodedNewPassword", userCaptor.getValue().getPassword());
+        assertEquals(updateUser.getFirstName(), user.getFirstName());
+        assertEquals(updateUser.getLastName(), user.getLastName());
+        assertEquals(updateUser.getEmail(), user.getEmail());
+        assertEquals("encodedNewPassword", user.getPassword());
 
         verify(userRepository).findById(1L);
         verify(userRepository).save(any(User.class));
