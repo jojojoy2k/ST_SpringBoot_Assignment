@@ -7,16 +7,12 @@ plugins {
 
 apply plugin: 'war'
 
-group = 'com.example'
+group = 'com.app.user'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
-}
-
-configurations {
-	devOnly
 }
 
 dependencies {
@@ -26,8 +22,8 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-crypto'
 	implementation 'org.springframework.boot:spring-boot-starter-logging'
 
-	compileOnly 'com.h2database:h2'
-	devOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.1.1'
@@ -35,10 +31,9 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
-	systemProperty "spring.profiles.active", "dev"
 }
 
 jacocoTestReport {
