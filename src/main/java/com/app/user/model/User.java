@@ -37,7 +37,6 @@ public class User {
         message = "Password must be at least 8 characters long and contain at least one digit, " +
                 "one lowercase letter, one uppercase letter, one special character, and no whitespace."
     )
-    
     private String password;
 
     public Long getId() {
